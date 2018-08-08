@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/modelo.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="formLista">
+			<p:panel header="Cadastro - Colaboradores">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{colaboradorBean.colaboradores}"
+					var="colaborador" rows="10">
+					<f:facet name="header">
+						<p:commandButton value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{colaboradorBean.novo}"
+							update=":formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</f:facet>
+
+					<p:column headerText="Nome" sortBy="#{colaborador.pessoa.nome}"
+						filterBy="#{colaborador.pessoa.nome}">
+						<h:outputText value="#{colaborador.pessoa.nome}" />
+					</p:column>
+
+					<p:column headerText="CPF" sortBy="#{colaborador.pessoa.cpf}"
+						filterBy="#{colaborador.pessoa.cpf}">
+						<h:outputText value="#{colaborador.pessoa.cpfFormatado}" />
+					</p:column>
+
+					<p:column headerText="Data de Admissão"
+						sortBy="#{colaborador.dataAdmissao}"
+						filterBy="#{colaborador.dataAdmissao}">
+						<h:outputText value="#{colaborador.dataAdmissao}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opções">
+
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{colaboradorBean.excluir}"
+							update=":mensagem :formLista:tabela">
+							<p:confirm header="Confirmação"
+								message="Deseja Excluir o colaborador?" icon="ui-icon-alert" />
+							<f:attribute value="#{colaborador}" name="colaboradorSelecionado" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{colaboradorBean.editar}"
+							update=":formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<f:attribute value="#{colaborador}" name="colaboradorSelecionado" />
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Colaborador - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true" closable="false">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel for="pessoa" value="Pessoa:" />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{colaboradorBean.colaborador.pessoa}" 
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo 'Pessoa' é obrigatório">
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{colaboradorBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<h:outputText for="carteiraTrabalho" value="Carteira Trabalho: " />
+					<p:inputMask id="carteiraTrabalho" size="10" maxlength="10"
+						value="#{colaboradorBean.colaborador.carteiraTrabalho}"
+						required="true"
+						requiredMessage="Carteira de trabalho é obrigatorio" />
+
+					<h:outputText for="dtadmissao" value="Data Admissão: " />
+					<p:calendar id="mask"
+						value="#{colaboradorBean.colaborador.dataAdmissao}"
+						pattern="dd/MM/yyyy" mask="true" required="true"
+						requiredMessage="Data de admissão é obrigatorio">
+					</p:calendar>
+
+					<h:outputText for="dtdemissao" value="Data demissão: " />
+					<p:calendar id="mask2"
+						value="#{colaboradorBean.colaborador.dataDemissao}"
+						pattern="dd/MM/yyyy" mask="true"
+						requiredMessage="data de admissão obrigatorio">
+					</p:calendar>
+
+					<h:outputText for="salarioBase" value="Salário Base: " />
+					<p:inputText id="salariobase" maxlength="15" size="17"
+						value="#{colaboradorBean.colaborador.salarioBase}" required="true"
+						requiredMessage="Salário base é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Salário'"
+						validatorMessage="Informe um valor entre 0,01 e 99.999,99 para o campo 'Salário'">
+						<f:validateDoubleRange minimum="0.01" maximum="99999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</p:inputText>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{colaboradorBean.salvar}"
+						update=":mensagem :formCadastro:painel :formLista:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Colaborador - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true" closable="false">
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="2">
+
+					<p:outputLabel for="pessoa" value="Pessoa:" />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{colaboradorBean.colaborador.pessoa}" required="true"
+						requiredMessage="O campo 'Pessoa' é obrigatório"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{colaboradorBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" itemLabel="#{pessoa.nome} - #{pessoa.cpf}"/>
+					</p:selectOneMenu>
+
+					<h:outputText for="carteiraTrabalho" value="Carteira Trabalho: " />
+					<p:inputMask id="carteiraTrabalho" size="10" maxlength="10"
+						value="#{colaboradorBean.colaborador.carteiraTrabalho}"
+						required="true"
+						requiredMessage="Carteira de trabalho é obrigatorio" />
+
+					<h:outputText for="dtadmissao" value="Data Admissão: " />
+					<p:calendar id="mask"
+						value="#{colaboradorBean.colaborador.dataAdmissao}"
+						pattern="dd/MM/yyyy" mask="true" required="true"
+						requiredMessage="Data de admissão é obrigatorio">
+					</p:calendar>
+
+					<h:outputText for="dtdemissao" value="Data demissão: " />
+					<p:calendar id="mask2"
+						value="#{colaboradorBean.colaborador.dataDemissao}"
+						pattern="dd/MM/yyyy" mask="true"
+						requiredMessage="data de admissão obrigatorio">
+					</p:calendar>
+
+					<h:outputText for="salarioBase" value="Salário Base: " />
+					<p:inputText id="salariobase" maxlength="15" size="17"
+						value="#{colaboradorBean.colaborador.salarioBase}" required="true"
+						requiredMessage="Salário base é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Salário'"
+						validatorMessage="Informe um valor entre 0,01 e 99.999,99 para o campo 'Salário'">
+						<f:validateDoubleRange minimum="0.01" maximum="99999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</p:inputText>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Atualizar"
+						actionListener="#{colaboradorBean.atualizar}"
+						update=":mensagem :formEditar:painelEditar :formLista:tabela" />
+					<p:commandButton value="Fechar"
+						actionListener="#{colaboradorBean.listar()}"
+						oncomplete="PF('dialogoEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

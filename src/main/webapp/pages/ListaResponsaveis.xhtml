@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/modelo.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="formLista">
+			<p:panel header="Cadastro - Responsaveis">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{responsavelBean.responsaveis}"
+					var="responsavel" rows="10">
+					<f:facet name="header">
+						<p:commandButton value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{responsavelBean.novo}"
+							update=":formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</f:facet>
+
+					<p:column headerText="Nome" sortBy="#{responsavel.pessoa.nome}"
+						filterBy="#{responsavel.pessoa.nome}">
+						<h:outputText value="#{responsavel.pessoa.nome}" />
+					</p:column>
+
+					<p:column headerText="CPF" sortBy="#{responsavel.pessoa.cpf}"
+						filterBy="#{responsavel.pessoa.cpf}">
+						<h:outputText value="#{responsavel.pessoa.cpfFormatado}" />
+					</p:column>
+
+					<p:column headerText="Data de Cadastro"
+						sortBy="#{responsavel.dataCadastro}"
+						filterBy="#{responsavel.dataCadastro}">
+						<h:outputText value="#{responsavel.dataCadastro}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opções">
+
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{responsavelBean.excluir}"
+							update=":mensagem :formLista:tabela">
+							<p:confirm header="Confirmação"
+								message="Deseja Excluir o responsável?" icon="ui-icon-alert" />
+							<f:attribute value="#{responsavel}" name="responsavelSelecionado" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{responsavelBean.editar}"
+							update=":formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<f:attribute value="#{responsavel}" name="responsavelSelecionado" />
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Responsavel - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true" closable="false">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel for="pessoa" value="Pessoa:" />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{responsavelBean.responsavel.pessoa}" required="true"
+						requiredMessage="O campo 'Pessoa' é obrigatório"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{responsavelBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<h:outputText for="dtcadastro" value="Data Cadastro: " />
+					<p:calendar id="mask"
+						value="#{responsavelBean.responsavel.dataCadastro}"
+						pattern="dd/MM/yyyy" mask="true" required="true"
+						requiredMessage="Data de cadastro é obrigatorio">
+					</p:calendar>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{responsavelBean.salvar}"
+						update=":mensagem :formCadastro:painel :formLista:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Responsavel - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true" closable="false">
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="2">
+
+					<p:outputLabel for="pessoa" value="Pessoa:" />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{responsavelBean.responsavel.pessoa}" required="true"
+						requiredMessage="O campo 'Pessoa' é obrigatório"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{responsavelBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<h:outputText for="dtcadastrp" value="Data Cadastro: " />
+					<p:calendar id="mask"
+						value="#{responsavelBean.responsavel.dataCadastro}"
+						pattern="dd/MM/yyyy" mask="true" required="true"
+						requiredMessage="Data de cadastro é obrigatorio">
+					</p:calendar>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Atualizar"
+						actionListener="#{responsavelBean.atualizar}"
+						update=":mensagem :formEditar:painelEditar :formLista:tabela" />
+					<p:commandButton value="Fechar"
+						actionListener="#{responsavelBean.listar()}"
+						oncomplete="PF('dialogoEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

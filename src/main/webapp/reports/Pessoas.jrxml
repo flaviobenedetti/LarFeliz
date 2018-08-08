@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Pessoas" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="532ef6da-677c-44d4-a45c-cd77a8953118">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="larfeliz Data Adapter "/>
+	<queryString language="SQL">
+		<![CDATA[SELECT larfeliz.pessoa.cpf,
+	larfeliz.pessoa.nome,
+	larfeliz.pessoa.celular,
+	larfeliz.pessoa.email
+FROM larfeliz.pessoa
+ORDER BY larfeliz.pessoa.nome ASC]]>
+	</queryString>
+	<field name="cpf" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cpf"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pessoa"/>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nome"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pessoa"/>
+	</field>
+	<field name="celular" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="celular"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pessoa"/>
+	</field>
+	<field name="email" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="email"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pessoa"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="87" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="80" height="80" uuid="6ae8adc3-8694-47ba-aa10-32a3e2b5177b"/>
+				<imageExpression><![CDATA["src/main/webapp/resources/images/LarFeliz.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="49" splitType="Stretch">
+			<staticText>
+				<reportElement x="170" y="10" width="210" height="30" uuid="2804cc78-9611-4d9f-a19a-38153727fe0f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Relatorio de Pessoas]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="30" uuid="77d49a68-3260-47b6-ad4d-c5c383d0c582">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0451e06c-b1fd-4d68-9da3-8534f9a3cc14"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CPF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="116" y="0" width="164" height="30" uuid="0513a4c5-2993-44a4-adab-fdc49be73dda">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e1132b75-3b12-43b6-9c48-2ce2896f377d"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="282" y="0" width="118" height="30" uuid="b50b7e01-8ab9-4d76-80ab-07876d040699">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0bbdbe91-ad86-477c-875d-e6dd6138aefe"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CELULAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="0" width="150" height="30" uuid="db8d329f-8fa6-48a3-9cb2-e528a41fe33e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="79164be7-be70-4715-81e5-1d5f16d5958c"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[E-MAIL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="30" uuid="fabef9ae-4d05-4e16-86c6-92d47428cc9b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0451e06c-b1fd-4d68-9da3-8534f9a3cc14"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{cpf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="119" y="0" width="161" height="30" uuid="24b49bea-ed0a-46ee-bdf5-9b3aa06b5a35">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e1132b75-3b12-43b6-9c48-2ce2896f377d"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="0" width="120" height="30" uuid="ee53fb58-43fe-468c-a929-2cbcf4de5c36">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0bbdbe91-ad86-477c-875d-e6dd6138aefe"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{celular}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="410" y="0" width="150" height="30" uuid="ca23d605-b84b-40f1-a8e2-155e1624051b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="79164be7-be70-4715-81e5-1d5f16d5958c"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

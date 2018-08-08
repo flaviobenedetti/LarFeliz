@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/modelo.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="formLista">
+			<p:panel header="Registro - Prontuários">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{prontuarioBean.prontuarios}"
+					var="prontuario" rows="10">
+					<f:facet name="header">
+						<p:commandButton value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{prontuarioBean.novo}"
+							update=":formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</f:facet>
+
+					<p:column headerText="Colaborador"
+						sortBy="#{prontuario.colaborador.pessoa.nome}"
+						filterBy="#{prontuario.colaborador.pessoa.nome}">
+						<h:outputText value="#{prontuario.colaborador.pessoa.nome}" />
+					</p:column>
+
+					<p:column headerText="Data" sortBy="#{prontuario.dataCadastro}"
+						filterBy="#{prontuario.dataCadastro}">
+						<h:outputText value="#{prontuario.dataCadastro}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Hora" sortBy="#{prontuario.horaCadastro}"
+						filterBy="#{prontuario.horaCadastro}">
+						<h:outputText value="#{prontuario.horaCadastro}">
+							<f:convertDateTime pattern="HH:mm" timeZone="GMT-03:00" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Paciente"
+						sortBy="#{prontuario.paciente.pessoa.nome}"
+						filterBy="#{prontuario.paciente.pessoa.nome}">
+						<h:outputText value="#{prontuario.paciente.pessoa.nome}" />
+					</p:column>
+
+
+					<p:column headerText="Opções">
+
+						<p:commandButton icon="ui-icon-circle-zoomin"
+							actionListener="#{prontuarioBean.consultar}"
+							update=":formConsultar:painelConsultar"
+							oncomplete="PF('dialogoConsultar').show();">
+							<f:attribute value="#{prontuario}" name="prontuarioSelecionado" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{prontuarioBean.editar}"
+							update=":formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<f:attribute value="#{prontuario}" name="prontuarioSelecionado" />
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Colaborador - Cadastro" widgetVar="dialogo"
+			draggable="true" resizable="true" modal="true" closable="true"
+			position="top">
+
+			<h:form id="formCadastro">
+
+				<p:wizard id="painel" flowListener="#{prontuarioBean.onFlowProcess}">
+
+					<p:tab id="personal" title="Prontuario">
+						<p:panel header="Colaborador X Paciente">
+							<p:messages />
+							<h:panelGrid columns="2" columnClasses="label, value">
+
+								<p:outputLabel for="colaborador" value="Colaborador:" />
+								<p:selectOneMenu id="colaborador" filter="true"
+									value="#{prontuarioBean.prontuario.colaborador}"
+									required="true"
+									requiredMessage="O campo 'Colaborador' é obrigatório"
+									converter="omnifaces.SelectItemsConverter">
+									<f:selectItem noSelectionOption="true"
+										itemLabel="Selecione um colaborador" />
+									<f:selectItems value="#{prontuarioBean.colaboradores}"
+										var="colaborador" itemValue="#{colaborador}"
+										itemLabel="#{colaborador.pessoa.nome} - #{colaborador.pessoa.cpfFormatado}" />
+								</p:selectOneMenu>
+
+								<p:outputLabel for="paciente" value="Paciente:" />
+								<p:selectOneMenu id="paciente" filter="true"
+									value="#{prontuarioBean.prontuario.paciente}" required="true"
+									requiredMessage="O campo 'paciente' é obrigatório"
+									converter="omnifaces.SelectItemsConverter">
+									<f:selectItem noSelectionOption="true"
+										itemLabel="Selecione um paciente" />
+									<f:selectItems value="#{prontuarioBean.pacientes}"
+										var="paciente" itemValue="#{paciente}"
+										itemLabel="#{paciente.pessoa.nome} - #{paciente.pessoa.cpfFormatado}" />
+								</p:selectOneMenu>
+
+							</h:panelGrid>
+						</p:panel>
+					</p:tab>
+
+					<p:tab id="apresenta" title="Apresenta">
+						<p:panel header="Apresenta">
+							<p:messages />
+							<h:panelGrid columns="1" columnClasses="label, value">
+								<h:outputText value="Apresenta: " />
+								<p:inputTextarea value="#{prontuarioBean.prontuario.apresenta}"
+									cols="100" maxlength="1255" />
+
+							</h:panelGrid>
+						</p:panel>
+					</p:tab>
+
+					<p:tab id="mantem" title="Mantem">
+						<p:panel header="Mantem">
+							<p:messages />
+							<h:panelGrid columns="1" columnClasses="label, value">
+
+								<h:outputText value="Mantem: " />
+								<p:inputTextarea value="#{prontuarioBean.prontuario.mantem}"
+									cols="100" maxlength="1255" />
+
+							</h:panelGrid>
+						</p:panel>
+					</p:tab>
+
+					<p:tab id="refere" title="refere">
+						<p:panel header="Refere">
+							<p:messages />
+							<h:panelGrid columns="1" columnClasses="label, value">
+
+								<h:outputText value="Refere: " />
+								<p:inputTextarea value="#{prontuarioBean.prontuario.refere}"
+									cols="100" maxlength="1255" />
+
+							</h:panelGrid>
+						</p:panel>
+					</p:tab>
+
+					<p:tab id="confirm" title="Confirmação">
+
+						<p:panel header="Confirmação">
+
+							<h:panelGrid id="confirmation" columns="1"
+								columnClasses="grid,grid">
+								<h:panelGrid columns="2" columnClasses="label, value">
+
+									<h:outputText value="Colaborador: " />
+									<h:outputText
+										value="#{prontuarioBean.prontuario.colaborador.pessoa.nome}"
+										styleClass="outputLabel" />
+
+									<h:outputText value="Paciente: " />
+									<h:outputText
+										value="#{prontuarioBean.prontuario.paciente.pessoa.nome}"
+										styleClass="outputLabel" />
+
+								</h:panelGrid>
+
+								<h:panelGrid columns="2" columnClasses="label, value">
+
+									<h:outputText value="Apresenta: " />
+									<h:outputText value="#{prontuarioBean.prontuario.apresenta}"
+										styleClass="outputLabel" />
+
+									<h:outputText value="mantem: " />
+									<h:outputText value="#{prontuarioBean.prontuario.mantem}"
+										styleClass="outputLabel" />
+
+									<h:outputText value="Refere: " />
+									<h:outputText value="#{prontuarioBean.prontuario.refere}"
+										styleClass="outputLabel" />
+
+								</h:panelGrid>
+							</h:panelGrid>
+
+							<p:commandButton value="Salvar"
+								actionListener="#{prontuarioBean.salvar}"
+								update=":mensagem :formLista:tabela :formCadastro:painel "
+								oncomplete="PF('dialogo').hide();" />
+
+						</p:panel>
+
+					</p:tab>
+
+				</p:wizard>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog header="Colaborador - Editar" widgetVar="dialogoEditar"
+			draggable="true" resizable="true" modal="true" closable="true"
+			position="top">
+
+			<h:form id="formEditar">
+
+				<p:wizard id="painelEditar"
+					flowListener="#{prontuarioBean.onFlowProcess}">
+
+					<p:tab id="personalEditar" title="Prontuario">
+						<p:panel header="Colaborador X Paciente">
+							<p:messages />
+							<h:panelGrid columns="2" columnClasses="label, value">
+
+								<p:outputLabel for="colaborador" value="Colaborador:" />
+
+								<h:outputText
+									value="#{prontuarioBean.prontuario.colaborador.pessoa.nome}"
+									id="colaborador" styleClass="outputLabel" />
+
+								<p:outputLabel for="paciente" value="Paciente:" />
+
+								<h:outputText
+									value="#{prontuarioBean.prontuario.paciente.pessoa.nome}"
+									id="paciente" styleClass="outputLabel" />
+
+							</h:panelGrid>
+						</p:panel>
+					</p:tab>
+
+					<p:tab id="apresenta" title="Apresenta">
+						<p:panel header="Apresenta">
+							<p:messages />
+							<h:panelGrid columns="1" columnClasses="label, value">
+								<h:outputText value="Apresenta: " />
+								<p:inputTextarea value="#{prontuarioBean.prontuario.apresenta}"
+									cols="100" maxlength="1255" />
+
+							</h:panelGrid>
+						</p:panel>
+					</p:tab>
+
+					<p:tab id="mantem" title="Mantem">
+						<p:panel header="Mantem">
+							<p:messages />
+							<h:panelGrid columns="1" columnClasses="label, value">
+
+								<h:outputText value="Mantem: " />
+								<p:inputTextarea value="#{prontuarioBean.prontuario.mantem}"
+									cols="100" maxlength="1255" />
+
+							</h:panelGrid>
+						</p:panel>
+					</p:tab>
+
+					<p:tab id="refere" title="refere">
+						<p:panel header="Refere">
+							<p:messages />
+							<h:panelGrid columns="1" columnClasses="label, value">
+
+								<h:outputText value="Refere: " />
+								<p:inputTextarea value="#{prontuarioBean.prontuario.refere}"
+									cols="100" maxlength="1255" />
+
+							</h:panelGrid>
+						</p:panel>
+					</p:tab>
+
+					<p:tab id="confirm" title="Confirmação">
+
+						<p:panel header="Confirmação">
+
+							<h:panelGrid id="confirmation" columns="1"
+								columnClasses="grid,grid">
+								<h:panelGrid columns="2" columnClasses="label, value">
+
+									<h:outputText value="Colaborador: " />
+									<h:outputText
+										value="#{prontuarioBean.prontuario.colaborador.pessoa.nome}"
+										styleClass="outputLabel" />
+
+									<h:outputText value="Paciente: " />
+									<h:outputText
+										value="#{prontuarioBean.prontuario.paciente.pessoa.nome}"
+										styleClass="outputLabel" />
+
+								</h:panelGrid>
+
+								<h:panelGrid columns="2" columnClasses="label, value">
+
+									<h:outputText value="Apresenta: " />
+									<h:outputText value="#{prontuarioBean.prontuario.apresenta}"
+										styleClass="outputLabel" />
+
+									<h:outputText value="mantem: " />
+									<h:outputText value="#{prontuarioBean.prontuario.mantem}"
+										styleClass="outputLabel" />
+
+									<h:outputText value="Refere: " />
+									<h:outputText value="#{prontuarioBean.prontuario.refere}"
+										styleClass="outputLabel" />
+
+								</h:panelGrid>
+							</h:panelGrid>
+
+							<p:commandButton value="Atualizar"
+								actionListener="#{prontuarioBean.salvar}"
+								update=":mensagem :formLista:tabela :formEditar:painelEditar "
+								oncomplete="PF('dialogoEditar').hide(); " />
+
+						</p:panel>
+
+					</p:tab>
+
+				</p:wizard>
+
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog header="Colaborador - Consultar"
+			widgetVar="dialogoConsultar" draggable="false" resizable="false"
+			modal="true" closable="false">
+
+			<h:form id="formConsultar">
+
+				<h:panelGrid id="painelConsultar" columns="2">
+
+					<p:outputLabel for="colaborador" value="Colaborador:" />
+					<h:outputText
+						value="#{prontuarioBean.prontuario.colaborador.pessoa.nome}"
+						id="colaborador" styleClass="outputLabel" />
+						
+					<p:outputLabel for="paciente" value="Paciente:" />
+					<h:outputText
+						value="#{prontuarioBean.prontuario.paciente.pessoa.nome}"
+						id="paciente" styleClass="outputLabel" />
+						
+					<h:outputText value="Apresenta: " />
+					<h:outputText value="#{prontuarioBean.prontuario.apresenta}"
+						styleClass="outputLabel" />
+
+					<h:outputText value="mantem: " />
+					<h:outputText value="#{prontuarioBean.prontuario.mantem}"
+						styleClass="outputLabel" />
+
+					<h:outputText value="Refere: " />
+					<h:outputText value="#{prontuarioBean.prontuario.refere}"
+						styleClass="outputLabel" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Fechar"
+						actionListener="#{prontuarioBean.listar()}"
+						oncomplete="PF('dialogoConsultar').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+
+		</p:dialog>
+
+
+
+
+	</ui:define>
+
+</ui:composition>

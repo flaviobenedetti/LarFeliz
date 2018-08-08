@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/modelo.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="formLista">
+			<p:panel header="Cadastro - Pessoas">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{pessoaBean.pessoas}" var="pessoa"
+					rows="10">
+					<f:facet name="header">
+						<p:commandButton value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{pessoaBean.novo}" update=":formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</f:facet>
+
+					<p:column headerText="Nome" sortBy="#{pessoa.nome}"
+						filterBy="#{pessoa.nome}">
+						<h:outputText value="#{pessoa.nome}" />
+					</p:column>
+
+					<p:column headerText="CPF" sortBy="#{pessoa.cpf}"
+						filterBy="#{pessoa.cpf}">
+						<h:outputText value="#{pessoa.cpfFormatado}" />
+					</p:column>
+
+					<p:column headerText="Aniversario"
+						sortBy="#{pessoa.dataNascimento}"
+						filterBy="#{pessoa.dataNascimento}">
+						<h:outputText value="#{pessoa.dataNascimento}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opções">
+
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{pessoaBean.excluir}"
+							update=":mensagem :formLista:tabela">
+							<p:confirm header="Confirmação"
+								message="Deseja Excluir o pessoa?" icon="ui-icon-alert" />
+							<f:attribute value="#{pessoa}" name="pessoaSelecionado" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{pessoaBean.editar}"
+							update=":formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<f:attribute value="#{pessoa}" name="pessoaSelecionado" />
+						</p:commandButton>
+
+					</p:column>
+					
+				</p:dataTable>
+				
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+				
+			</p:panel>
+			
+		</h:form>
+
+		<p:dialog header="Pessoa - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true" closable="false">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<h:outputText for="nome" value="Nome:" />
+					<p:inputText id="nome" maxlength="50" size="30"
+						value="#{pessoaBean.pessoa.nome}" required="true"
+						requiredMessage="Nome é obrigatorio" />
+
+					<h:outputText for="rg" value="RG: " />
+					<p:inputMask id="rg" mask="99.999.999-9" size="10"
+						value="#{pessoaBean.pessoa.rg}" required="true"
+						requiredMessage="RG é obrigatorio" />
+
+					<h:outputText for="cpf" value="CPF: " />
+					<p:inputMask id="cpf" mask="999.999.999-99" size="10"
+						value="#{pessoaBean.pessoa.cpf}" required="true"
+						requiredMessage="CPF é obrigatorio" />
+
+					<h:outputText for="dtnasc" value="Data Nascimento: " />
+					<p:calendar id="mask" value="#{pessoaBean.pessoa.dataNascimento}"
+						pattern="dd/MM/yyyy" mask="true" required="true"
+						requiredMessage="data de nascimento obrigatorio">
+					</p:calendar>
+
+					<h:outputText for="cep" value="CEP: " />
+					<p:inputMask id="cep" mask="99.999-999" size="10"
+						value="#{pessoaBean.pessoa.cep}" >
+						<p:ajax event="blur" listener="#{pessoaBean.buscaEndereco}"
+							update="formCadastro:rua formCadastro:bairro formCadastro:cidade formCadastro:estado" />
+
+					</p:inputMask>
+					<h:outputText for="rua" value="Rua: " />
+					<p:inputText id="rua" maxlength="100" size="50"
+						value="#{pessoaBean.pessoa.rua}" />
+
+					<h:outputText for="numero" value="Numero: " />
+					<p:inputText id="numero" maxlength="5" size="10"
+						value="#{pessoaBean.pessoa.numero}" />
+
+					<h:outputText for="complemento" value="Complemento: " />
+					<p:inputText id="complemento" maxlength="30" size="30"
+						value="#{pessoaBean.pessoa.complemento}" />
+
+					<h:outputText for="bairro" value="Bairro: " />
+					<p:inputText id="bairro" maxlength="50" size="50"
+						value="#{pessoaBean.pessoa.bairro}" />
+
+					<h:outputText for="cidade" value="Cidade: " />
+					<p:inputText id="cidade" maxlength="50"
+						value="#{pessoaBean.pessoa.cidade}" />
+
+					<h:outputText for="estado" value="Estado: " />
+					<p:inputText id="estado" maxlength="30"
+						value="#{pessoaBean.pessoa.estado}" />
+
+					<h:outputText for="telefone" value="Telefone: " />
+					<p:inputMask id="telefone" mask="(99)9999-9999" size="15"
+						value="#{pessoaBean.pessoa.telefone}" />
+
+					<h:outputText for="celular" value="Celular: " />
+					<p:inputMask id="celular" mask="(99)99999-9999" size="15"
+						value="#{pessoaBean.pessoa.celular}" />
+
+					<h:outputText for="email" value="Email: " />
+					<p:inputText id="email" maxlength="100" max="100"
+						value="#{pessoaBean.pessoa.email}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{pessoaBean.salvar}"
+						update=":mensagem :formCadastro:painel :formLista:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Pessoa - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true" closable="false">
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="2">
+
+					<h:outputText for="nome" value="Nome:" />
+					<p:inputText id="nome" maxlength="50" size="30"
+						value="#{pessoaBean.pessoa.nome}" required="true"
+						requiredMessage="Nome é obrigatorio" />
+
+					<h:outputText for="rg" value="RG: " />
+					<p:inputMask id="rg" mask="99.999.999-9" size="10"
+						value="#{pessoaBean.pessoa.rg}" required="true"
+						requiredMessage="RG é obrigatorio" />
+
+					<h:outputText for="cpf" value="CPF: " />
+					<p:inputMask id="cpf" mask="999.999.999-99" size="10"
+						value="#{pessoaBean.pessoa.cpf}" required="true"
+						requiredMessage="CPF é obrigatorio" />
+
+					<h:outputText for="dtnasc" value="Data Nascimento: " />
+					<p:calendar id="mask" value="#{pessoaBean.pessoa.dataNascimento}"
+						pattern="dd/MM/yyyy" mask="true" required="true"
+						requiredMessage="data de nascimento obrigatorio">
+					</p:calendar>
+
+					<h:outputText for="cep" value="CEP: " />
+					<p:inputMask id="cep" mask="99.999-999" size="10"
+						value="#{pessoaBean.pessoa.cep}" >
+						<p:ajax event="blur" listener="#{pessoaBean.buscaEndereco}"
+							update=":formEditar:rua formEditar:bairro formEditar:cidade formEditar:estado" />
+
+					</p:inputMask>
+					<h:outputText for="rua" value="Rua: " />
+					<p:inputText id="rua" maxlength="100" size="50"
+						value="#{pessoaBean.pessoa.rua}"  />
+
+					<h:outputText for="numero" value="Numero: " />
+					<p:inputText id="numero" maxlength="5" size="10"
+						value="#{pessoaBean.pessoa.numero}" />
+
+					<h:outputText for="complemento" value="Complemento: " />
+					<p:inputText id="complemento" maxlength="30" size="30"
+						value="#{pessoaBean.pessoa.complemento}" />
+
+					<h:outputText for="bairro" value="Bairro: " />
+					<p:inputText id="bairro" maxlength="50" size="50"
+						value="#{pessoaBean.pessoa.bairro}"/>
+
+					<h:outputText for="cidade" value="Cidade: " />
+					<p:inputText id="cidade" maxlength="50"
+						value="#{pessoaBean.pessoa.cidade}" />
+
+					<h:outputText for="estado" value="Estado: " />
+					<p:inputText id="estado" maxlength="30"
+						value="#{pessoaBean.pessoa.estado}" />
+
+					<h:outputText for="telefone" value="Telefone: " />
+					<p:inputMask id="telefone" mask="(99)9999-9999" size="15"
+						value="#{pessoaBean.pessoa.telefone}" />
+
+					<h:outputText for="celular" value="Celular: " />
+					<p:inputMask id="celular" mask="(99)99999-9999" size="15"
+						value="#{pessoaBean.pessoa.celular}" />
+
+					<h:outputText for="email" value="Email: " />
+					<p:inputText id="email" maxlength="100" max="100"
+						value="#{pessoaBean.pessoa.email}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Atualizar"
+						actionListener="#{pessoaBean.atualizar}"
+						update=":mensagem :formEditar:painelEditar :formLista:tabela" />
+					<p:commandButton value="Fechar"
+						actionListener="#{pessoaBean.listar()}"
+						oncomplete="PF('dialogoEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

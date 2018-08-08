@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/modelo.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form>
+
+			<p:growl id="growl" sticky="true" showDetail="true" />
+
+			<p:wizard flowListener="#{prontuarioBean.onFlowProcess}">
+				<p:tab id="personal" title="Prontuario">
+					<p:panel header="Colaborador X Paciente">
+						<p:messages />
+						<h:panelGrid columns="2" columnClasses="label, value">
+
+							<p:outputLabel for="colaborador" value="Colaborador:" />
+							<p:selectOneMenu id="colaborador" filter="true"
+								value="#{prontuarioBean.prontuario.colaborador}" required="true"
+								requiredMessage="O campo 'Colaborador' é obrigatório"
+								converter="omnifaces.SelectItemsConverter">
+								<f:selectItem noSelectionOption="true"
+									itemLabel="Selecione um colaborador" />
+								<f:selectItems value="#{prontuarioBean.colaboradores}"
+									var="colaborador" itemValue="#{colaborador}"
+									itemLabel="#{colaborador.pessoa.nome} - #{colaborador.pessoa.cpfFormatado}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel for="paciente" value="Paciente:" />
+							<p:selectOneMenu id="paciente" filter="true"
+								value="#{prontuarioBean.prontuario.paciente}" required="true"
+								requiredMessage="O campo 'paciente' é obrigatório"
+								converter="omnifaces.SelectItemsConverter">
+								<f:selectItem noSelectionOption="true"
+									itemLabel="Selecione um paciente" />
+								<f:selectItems value="#{prontuarioBean.pacientes}"
+									var="paciente" itemValue="#{paciente}"
+									itemLabel="#{paciente.pessoa.nome} - #{paciente.pessoa.cpfFormatado}" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Skip to last: " />
+							<h:selectBooleanCheckbox value="#{prontuarioBean.skip}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="passo1" title="Passo 1">
+					<p:panel header="Passo 1">
+						<p:messages />
+						<h:panelGrid columns="1" columnClasses="label, value">
+							<h:outputText value="Nivel de conciência: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.estadoNivelConciencia}"
+								cols="100" maxlength="255" />
+
+							<h:outputText value="Estado mental: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.estadoMental}" cols="100"
+								maxlength="255" />
+
+							<h:outputText value="Estado emocional: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.estadoEmocional}" cols="100"
+								maxlength="255" />
+
+							<h:outputText value="Condição Deambulação: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.condicaoDeambulacao}"
+								cols="100" maxlength="255" />
+
+							<h:outputText value="Skip to last: " />
+							<h:selectBooleanCheckbox value="#{prontuarioBean.skip}" />
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="passo2" title="Passo 2">
+					<p:panel header="Passo 2">
+						<p:messages />
+						<h:panelGrid columns="1" columnClasses="label, value">
+
+							<h:outputText value="Acamado: " />
+							<p:inputTextarea value="#{prontuarioBean.prontuario.acamado}"
+								cols="100" maxlength="255" />
+
+							<h:outputText value="Repouso no Leito: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.repousoLeito}" cols="100"
+								maxlength="255" />
+
+							<h:outputText value="Sono e Repouso: " />
+							<p:inputTextarea value="#{prontuarioBean.prontuario.repousoSono}"
+								cols="100" maxlength="255" />
+
+							<h:outputText value="Equipamentos: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.equipamentos}" cols="100"
+								maxlength="255" />
+
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="passo3" title="Passo 3">
+					<p:panel header="Passo 3">
+						<p:messages />
+						<h:panelGrid columns="1" columnClasses="label, value">
+
+							<h:outputText value="Sinais: " />
+							<p:inputTextarea value="#{prontuarioBean.prontuario.sinais}"
+								cols="100" maxlength="255" />
+
+							<h:outputText value="Sintomas: " />
+							<p:inputTextarea value="#{prontuarioBean.prontuario.sintomas}"
+								cols="100" maxlength="255" />
+
+							<h:outputText value="Condições dos menbros: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.condicoesMembros}" cols="100"
+								maxlength="255" />
+
+							<h:outputText value="Aceitação Dieta: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.aceitacaoDieta}" cols="100"
+								maxlength="255" />
+
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="passo4" title="Passo 4">
+					<p:panel header="Passo 4">
+						<p:messages />
+						<h:panelGrid columns="1" columnClasses="label, value">
+
+							<h:outputText value="Eliminação Vesical " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.eliminacaoVesical}"
+								cols="100" maxlength="255" />
+
+							<h:outputText value="Eliminação Intestinal: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.eliminacaoIntestinal}"
+								cols="100" maxlength="255" />
+
+							<h:outputText value="Orientações dadas: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.orientacoesDadas}" cols="100"
+								maxlength="255" />
+
+							<h:outputText value="Condutas adotadas: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.condutasAdotadas}" cols="100"
+								maxlength="255" />
+
+							<h:outputText value="resultado Condutas adotadas: " />
+							<p:inputTextarea
+								value="#{prontuarioBean.prontuario.resultadoCondutasAdotadas}"
+								cols="100" maxlength="255" />
+
+						</h:panelGrid>
+					</p:panel>
+				</p:tab>
+
+
+				<p:tab id="confirm" title="Confirmation">
+					<p:panel header="Confirmation">
+						<h:panelGrid id="confirmation" columns="1" columnClasses="grid,grid">
+							<h:panelGrid columns="2" columnClasses="label, value">
+
+								<h:outputText value="Colaborador: " />
+								<h:outputText value="#{prontuarioBean.prontuario.colaborador.pessoa.nome}"
+									styleClass="outputLabel" />
+
+								<h:outputText value="Paciente: " />
+								<h:outputText value="#{prontuarioBean.prontuario.paciente.pessoa.nome}"
+									styleClass="outputLabel" />
+							
+							</h:panelGrid>
+							
+							<h:panelGrid columns="2" columnClasses="label, value">
+							
+								<h:outputText value="Estado/Nivel de conciencia: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.estadoNivelConciencia}"
+									styleClass="outputLabel" />
+
+								<h:outputText value="Estado mental: " />
+								<h:outputText value="#{prontuarioBean.prontuario.estadoMental}"
+									styleClass="outputLabel" />
+
+								<h:outputText value="Estado emocional: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.estadoEmocional}"
+									styleClass="outputLabel" />
+
+								<h:outputText value="Condição deambulação: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.condicaoDeambulacao}"
+									styleClass="outputLabel" />
+
+								<h:outputText value="Acamado: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.acamado}"
+									styleClass="outputLabel" />
+									
+								<h:outputText value="Repouso no Leito: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.repousoLeito}"
+									styleClass="outputLabel" />
+									
+								<h:outputText value="Repouso e sono: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.repousoSono}"
+									styleClass="outputLabel" />
+	
+								<h:outputText value="Equipamentos: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.equipamentos}"
+									styleClass="outputLabel" />
+	
+								<h:outputText value="Sinais: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.sinais}"
+									styleClass="outputLabel" />
+	
+								<h:outputText value="Sintomas: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.sintomas}"
+									styleClass="outputLabel" />
+
+								<h:outputText value="Condições membros: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.condicoesMembros}"
+									styleClass="outputLabel" />
+	
+								<h:outputText value="Aceitação Dieta: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.aceitacaoDieta}"
+									styleClass="outputLabel" />
+		
+								<h:outputText value="Eliminação vesical: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.eliminacaoVesical}"
+									styleClass="outputLabel" />
+	
+								<h:outputText value="Eliminação Intestinal: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.eliminacaoIntestinal}"
+									styleClass="outputLabel" />
+	
+								<h:outputText value="Orientações dadas: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.orientacoesDadas}"
+									styleClass="outputLabel" />
+	
+								<h:outputText value="Condutas adotadas: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.condutasAdotadas}"
+									styleClass="outputLabel" />
+	
+								<h:outputText value="Resultados condultas adotadas: " />
+								<h:outputText
+									value="#{prontuarioBean.prontuario.resultadoCondutasAdotadas}"
+									styleClass="outputLabel" />
+	
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<p:commandButton value="Salvar" actionListener="#{prontuarioBean.salvar}"
+							update="growl" process="@this" />
+					</p:panel>
+				</p:tab>
+			</p:wizard>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

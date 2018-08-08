@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Lar Feliz</title>
+</h:head>
+<h:body>
+	<p:growl id="mensagem" />
+
+	<div id="geral">
+
+		<h:form id="formMenu">
+						
+			<div id="cabecalho">
+				<p:menubar>
+					<p:submenu label="Cadastro" rendered="#{autenticarBean.temPermissao(['A'])}">
+						<p:menuitem value="Pessoas" url="/pages/ListaPessoas.xhtml"/>
+						<p:menuitem value="Colaboradores" url="/pages/ListaColaboradores.xhtml"/>						
+						<p:menuitem value="Responsáveis" url="/pages/ListaResponsaveis.xhtml" />
+						<p:menuitem value="Pacientes" url="/pages/ListaPacientes.xhtml"/>
+						<p:menuitem value="Usuarios" url="/pages/ListaUsuarios.xhtml"/>
+					</p:submenu>
+					
+					<p:submenu label="Financeiro" rendered="#{autenticarBean.temPermissao(['A'])}">
+						<p:menuitem value="Movimentações" url="/pages/ListaMovimentacao.xhtml"/>
+						<p:menuitem value="Estoque" url="/pages/ListaEstoque.xhtml"/>
+						<p:menuitem value="Parâmentros" url="/pages/ListaItemMovimentacao.xhtml"/>																		
+					</p:submenu>
+
+					<p:submenu label="Colaborador" rendered="#{autenticarBean.temPermissao(['A', 'C'])}">
+						<p:menuitem value="Prontuário" url="/pages/ListaProntuarios.xhtml"/>												
+					</p:submenu>
+					
+					<p:menuitem value="Sair" action="#{autenticarBean.logout}" />
+					
+					<f:facet name="options">
+						<h:outputText value="Usuário:"/>
+						<h:outputText value="#{autenticarBean.usuarioLogado.pessoa.nome}" />
+					</f:facet>					
+				</p:menubar>
+				
+			</div>
+		</h:form>
+		<div id="conteudo">
+			<ui:insert name="conteudo" />
+		</div>
+
+	</div>
+
+
+</h:body>
+</html>

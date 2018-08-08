@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/modelo.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="formLista">
+			<p:panel header="Movimentação Financeira">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{movimentacaoBean.movimentacoes}" var="movimentacao"
+					rows="10">
+					<f:facet name="header">
+						<p:commandButton value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{movimentacaoBean.novo()}" update=":formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</f:facet>
+
+					<p:column headerText="Data" sortBy="#{movimentacao.data}"
+						filterBy="#{movimentacao.data}">
+						<h:outputText value="#{movimentacao.data}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Descrição"
+						sortBy="#{movimentacao.itemMovimentacao.descricaoItem}"
+						filterBy="#{movimentacao.itemMovimentacao.descricaoItem}">
+						<h:outputText
+							value="#{movimentacao.itemMovimentacao.descricaoItem}" />
+					</p:column>					
+
+					<p:column headerText="Tipo" sortBy="#{movimentacao.tipo}"
+						filterBy="#{movimentacao.tipo}">
+						<h:outputText value="#{movimentacao.tipoForm}" />
+					</p:column>
+
+					<p:column headerText="valor" sortBy="#{movimentacao.valor}"
+						filterBy="#{movimentacao.valor}">
+						<h:outputText value="#{movimentacao.valor}">
+							<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Opções">
+
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{movimentacaoBean.excluir}"
+							update=":mensagem :formLista:tabela">
+							<p:confirm header="Confirmação"
+								message="Deseja Excluir o movimento?" icon="ui-icon-alert" />
+							<f:attribute value="#{movimentacao}" name="movimentacaoSelecionado" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{movimentacaoBean.editar}"
+							update=":formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<f:attribute value="#{movimentacao}" name="movimentacaoSelecionado" />
+						</p:commandButton>
+
+					</p:column>
+					
+				</p:dataTable>
+				
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+				
+			</p:panel>
+			
+		</h:form>
+
+		<p:dialog header="Movimentação - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true" closable="false">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel for="tipo" value="Tipo:" />
+					<p:selectOneRadio id="tipo"
+						value="#{movimentacaoBean.movimentacao.tipo}" required="true"
+						requiredMessage="O campo 'Tipo' ´obrigatório">
+						<f:selectItem itemValue="C" itemLabel="Crédito" />
+						<f:selectItem itemValue="D" itemLabel="Débito" />
+					</p:selectOneRadio>
+
+					<h:outputText for="data" value="Data: " />
+					<p:calendar id="data"
+						value="#{movimentacaoBean.movimentacao.data}" pattern="dd/MM/yyyy"
+						mask="true" requiredMessage="data obrigatorio">
+					</p:calendar>
+
+					<h:outputText for="descricao" value="Descrição:" />
+					<p:inputText id="descricao" maxlength="255" size="50"
+						value="#{movimentacaoBean.movimentacao.descricao}" required="true"
+						requiredMessage="Nome é obrigatorio" />
+
+					<h:outputText for="valor" value="Valor: " />
+					<p:inputText id="salariobase" maxlength="15" size="17"
+						value="#{movimentacaoBean.movimentacao.valor}" required="true"
+						requiredMessage="valor é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Salário'"
+						validatorMessage="Informe um valor entre 0,01 e 99.999,99 para o campo 'Valor'">
+						<f:validateDoubleRange minimum="0.01" maximum="99999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</p:inputText>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{movimentacaoBean.salvar}"
+						update=":mensagem :formCadastro:painel :formLista:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Movimentacao - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true" closable="false">
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="2">
+
+					<h:outputLabel for="tipo" value="Tipo:" />
+					<p:selectOneRadio id="tipo"
+						value="#{movimentacaoBean.movimentacao.tipo}" required="true"
+						requiredMessage="O campo 'Tipo' ´obrigatório">
+						<f:selectItem itemValue="C" itemLabel="Crédito" />
+						<f:selectItem itemValue="D" itemLabel="Débito" />
+					</p:selectOneRadio>
+
+					<h:outputText for="data" value="Data: " />
+					<p:calendar id="data"
+						value="#{movimentacaoBean.movimentacao.data}" pattern="dd/MM/yyyy"
+						mask="true" requiredMessage="data obrigatorio">
+					</p:calendar>
+
+					<h:outputText for="descricao" value="Descrição:" />
+					<p:inputText id="descricao" maxlength="255" size="50"
+						value="#{movimentacaoBean.movimentacao.descricao}" required="true"
+						requiredMessage="Nome é obrigatorio" />
+
+					<h:outputText for="valor" value="Valor: " />
+					<p:inputText id="salariobase" maxlength="15" size="17"
+						value="#{movimentacaoBean.movimentacao.valor}" required="true"
+						requiredMessage="valor é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Salário'"
+						validatorMessage="Informe um valor entre 0,01 e 99.999,99 para o campo 'Valor'">
+						<f:validateDoubleRange minimum="0.01" maximum="99999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</p:inputText>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Atualizar"
+						actionListener="#{movimentacaoBean.atualizar}"
+						update=":mensagem :formEditar:painelEditar :formLista:tabela" />
+					<p:commandButton value="Fechar"
+						actionListener="#{movimentacaoBean.listar()}"
+						oncomplete="PF('dialogoEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
