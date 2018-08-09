@@ -128,15 +128,7 @@
 				<h:panelGrid id="painelEditar" columns="2">
 
 					<p:outputLabel for="paciente" value="Paciente:" />
-					<p:selectOneMenu id="paciente" filter="true"
-						value="#{pacienteBean.paciente.pessoa}" required="true"
-						requiredMessage="O campo 'Paciente' é obrigatório"
-						converter="omnifaces.SelectItemsConverter">
-						<f:selectItem noSelectionOption="true"
-							itemLabel="Selecione uma pessoa" />
-						<f:selectItems value="#{pacienteBean.pessoas}" var="pessoa"
-							itemValue="#{pessoa}" itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
-					</p:selectOneMenu>
+					<h:outputText id="paciente" value="#{pacienteBean.paciente.pessoa.nome}"/>
 
 					<p:outputLabel for="responsavel" value="Responsável:" />
 					<p:selectOneMenu id="responsavel" filter="true"

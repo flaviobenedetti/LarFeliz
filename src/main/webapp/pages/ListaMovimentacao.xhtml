@@ -11,11 +11,12 @@
 		<h:form id="formLista">
 			<p:panel header="Movimentação Financeira">
 				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
-					paginator="true" value="#{movimentacaoBean.movimentacoes}" var="movimentacao"
-					rows="10">
+					paginator="true" value="#{movimentacaoBean.movimentacoes}"
+					var="movimentacao" rows="10">
 					<f:facet name="header">
 						<p:commandButton value="Novo" oncomplete="PF('dialogo').show();"
-							actionListener="#{movimentacaoBean.novo()}" update=":formCadastro:painel">
+							actionListener="#{movimentacaoBean.novo()}"
+							update=":formCadastro:painel">
 							<f:actionListener
 								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 						</p:commandButton>
@@ -27,13 +28,13 @@
 							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00" />
 						</h:outputText>
 					</p:column>
-					
+
 					<p:column headerText="Descrição"
 						sortBy="#{movimentacao.itemMovimentacao.descricaoItem}"
 						filterBy="#{movimentacao.itemMovimentacao.descricaoItem}">
 						<h:outputText
 							value="#{movimentacao.itemMovimentacao.descricaoItem}" />
-					</p:column>					
+					</p:column>
 
 					<p:column headerText="Tipo" sortBy="#{movimentacao.tipo}"
 						filterBy="#{movimentacao.tipo}">
@@ -46,7 +47,7 @@
 							<f:convertNumber locale="pt_BR" minFractionDigits="2" />
 						</h:outputText>
 					</p:column>
-					
+
 					<p:column headerText="Opções">
 
 						<p:commandButton icon="ui-icon-trash"
@@ -54,35 +55,58 @@
 							update=":mensagem :formLista:tabela">
 							<p:confirm header="Confirmação"
 								message="Deseja Excluir o movimento?" icon="ui-icon-alert" />
-							<f:attribute value="#{movimentacao}" name="movimentacaoSelecionado" />
+							<f:attribute value="#{movimentacao}"
+								name="movimentacaoSelecionado" />
 						</p:commandButton>
 
 						<p:commandButton icon="ui-icon-pencil"
 							actionListener="#{movimentacaoBean.editar}"
 							update=":formEditar:painelEditar"
 							oncomplete="PF('dialogoEditar').show();">
-							<f:attribute value="#{movimentacao}" name="movimentacaoSelecionado" />
+							<f:attribute value="#{movimentacao}"
+								name="movimentacaoSelecionado" />
 						</p:commandButton>
 
 					</p:column>
-					
+
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column></p:column>	
+							<p:column></p:column>
+							<p:column footerText="Total: " style="text-align:right" />
+							<p:column footerText="#{movimentacaoBean.movimentacao.totalCredito}" />							
+						</p:row>
+					</p:columnGroup>
+
 				</p:dataTable>
-				
+
 				<p:confirmDialog global="true">
 					<p:commandButton value="Sim" type="button"
 						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 					<p:commandButton value="Não" type="button"
 						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 				</p:confirmDialog>
-				
+
 			</p:panel>
-			
+
 		</h:form>
 
 		<p:dialog header="Movimentação - Cadastro" widgetVar="dialogo"
 			draggable="false" resizable="false" modal="true" closable="false">
 			<h:form id="formCadastro">
 				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel for="itemMovimentacao" value="Item:" />
+					<p:selectOneMenu id="itemMovimentacao" filter="true"
+						value="#{movimentacaoBean.itemMovimentacao}" required="true"
+						requiredMessage="O campo 'Item' é obrigatório"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Selecione um item" />
+						<f:selectItems value="#{movimentacaoBean.itensMovimentacao}"
+							var="itemMovimentacao" itemValue="#{itemMovimentacao}"
+							itemLabel="#{itemMovimentacao.descricaoItem}" />
+					</p:selectOneMenu>
 
 					<p:outputLabel for="tipo" value="Tipo:" />
 					<p:selectOneRadio id="tipo"
@@ -93,9 +117,9 @@
 					</p:selectOneRadio>
 
 					<h:outputText for="data" value="Data: " />
-					<p:calendar id="data"
-						value="#{movimentacaoBean.movimentacao.data}" pattern="dd/MM/yyyy"
-						mask="true" requiredMessage="data obrigatorio">
+					<p:calendar id="data" value="#{movimentacaoBean.movimentacao.data}"
+						pattern="dd/MM/yyyy" mask="true"
+						requiredMessage="data obrigatorio">
 					</p:calendar>
 
 					<h:outputText for="descricao" value="Descrição:" />
@@ -130,24 +154,9 @@
 			<h:form id="formEditar">
 				<h:panelGrid id="painelEditar" columns="2">
 
-					<h:outputLabel for="tipo" value="Tipo:" />
-					<p:selectOneRadio id="tipo"
-						value="#{movimentacaoBean.movimentacao.tipo}" required="true"
-						requiredMessage="O campo 'Tipo' ´obrigatório">
-						<f:selectItem itemValue="C" itemLabel="Crédito" />
-						<f:selectItem itemValue="D" itemLabel="Débito" />
-					</p:selectOneRadio>
-
-					<h:outputText for="data" value="Data: " />
-					<p:calendar id="data"
-						value="#{movimentacaoBean.movimentacao.data}" pattern="dd/MM/yyyy"
-						mask="true" requiredMessage="data obrigatorio">
-					</p:calendar>
-
-					<h:outputText for="descricao" value="Descrição:" />
-					<p:inputText id="descricao" maxlength="255" size="50"
-						value="#{movimentacaoBean.movimentacao.descricao}" required="true"
-						requiredMessage="Nome é obrigatorio" />
+					<h:outputText for="itemMovimentacao" value="Item: " />
+					<h:outputText id="itemMovimentacao"
+						value="#{movimentacaoBean.movimentacao.itemMovimentacao.descricaoItem}" />
 
 					<h:outputText for="valor" value="Valor: " />
 					<p:inputText id="salariobase" maxlength="15" size="17"
@@ -158,6 +167,25 @@
 						<f:validateDoubleRange minimum="0.01" maximum="99999.99" />
 						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
 					</p:inputText>
+
+					<h:outputLabel for="tipo" value="Tipo:" />
+					<p:selectOneRadio id="tipo"
+						value="#{movimentacaoBean.movimentacao.tipo}" required="true"
+						requiredMessage="O campo 'Tipo' ´obrigatório">
+						<f:selectItem itemValue="C" itemLabel="Crédito" />
+						<f:selectItem itemValue="D" itemLabel="Débito" />
+					</p:selectOneRadio>
+
+					<h:outputText for="data" value="Data: " />
+					<p:calendar id="data" value="#{movimentacaoBean.movimentacao.data}"
+						pattern="dd/MM/yyyy" mask="true"
+						requiredMessage="data obrigatorio">
+					</p:calendar>
+
+					<h:outputText for="descricao" value="Descrição:" />
+					<p:inputText id="descricao" maxlength="255" size="50"
+						value="#{movimentacaoBean.movimentacao.descricao}" required="true"
+						requiredMessage="Nome é obrigatorio" />
 
 				</h:panelGrid>
 

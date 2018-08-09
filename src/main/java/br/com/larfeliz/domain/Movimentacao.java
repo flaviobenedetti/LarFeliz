@@ -31,7 +31,7 @@ public class Movimentacao extends GenericDomain {
 	
 	@Column(nullable = true, length = 255)
 	private String descricao;
-
+	
 	public Date getData() {
 		return data;
 	}
@@ -81,8 +81,4 @@ public class Movimentacao extends GenericDomain {
 		this.descricao = descricao;
 	}
 	
-	
-	
-	
-
 }

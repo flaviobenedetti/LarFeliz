@@ -1,6 +1,8 @@
 package br.com.larfeliz.bean;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -77,6 +79,9 @@ public class MovimentacaoBean implements Serializable {
 		movimentacao = new Movimentacao();		
 		ItemMovimentacaoDAO itemMovimentacaoDAO = new ItemMovimentacaoDAO();
 		itensMovimentacao = itemMovimentacaoDAO.listar();
+		
+		TotalCredito(new BigDecimal(1.99).setScale(2, RoundingMode.HALF_EVEN));
+		
 	}
 
 	public void salvar() {
